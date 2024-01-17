@@ -31,7 +31,8 @@
 //! without any machine-specific instructions.
 //!
 //! The wyhash_final4 is the latest version of wyhash, which is incompatible
-//! with previous versions, but resolves the issue of bad seeds.
+//! with previous versions, but resolves the issue of bad seeds that found
+//! in previous versions.
 //!
 
 #![cfg_attr(feature = "no_std", no_std)]

@@ -3,7 +3,7 @@ crate-type=["lib"]
 [package]
 name = "wyhash-final4"
 description = "The rust implementation of wyhash final4 hash function"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license-file = "./LICENSE"
 

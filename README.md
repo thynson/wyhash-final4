@@ -4,19 +4,20 @@ wyhash-final4
 This crate provides a pure rust implementation of wyhash_final4, the latest
 version of wyhash as of January 2024; wyhash which is an extremely fast hash 
 function that can be implemented without any machine-specific instructions,
-while producing high quality hash result, see [smhasher] for details.
+while producing high quality hash result. See [smhasher] for hash function
+comparison details.
 
 Related works
 -------------
 There are several other implementations of wyhash in rust, but none of them
-provides the latest version of wyhash. 
+provides the latest version of wyhash (that is, the `final4`). 
 - [wyhash](https://github.com/eldruin/wyhash-rs)
 - [wy](https://github.com/DoumanAsh/wyhash)
-- [wyhash4](https://crates.io/crates/wyhash2) 
+- [wyhash2](https://crates.io/crates/wyhash2) 
 
 Variants
 --------
-This crate provides all variants of wyhash, namely
+This crate provides all the 4 variants of wyhash, namely
 
 - `WyHash64`, the default variant, using 64-bit multiplication for mixing.
 - `WyHash64Condom`, using 64-bit multiplication and an extra bit-xor for mixing
@@ -37,9 +38,11 @@ Usage
 This crate provides three ways to hash inputs:
 
 - One-shot hashing, e.g. just call `WyHash64::hash(input)` to get the hash result. This is
-  the simplest and recommended way when default seed and secrets are used.
+  the simplest and the recommended way when default seed and secrets are used.
   There are also `Wyhash::hash_with_seed` and `Wyhash::hash_with_secret` for one-shot hashing
-  with custom seed and secret, but use them only when the seed and secret cannot be reused.
+  with custom seed and secret, but unless the seed and secret changed over time, it's better
+  to use the following methods.
+
 - Create an instance of`WyHash` with `with_seed` or `with_seed_and_secret` before hashing, e.g.
 
   ```
@@ -49,7 +52,9 @@ This crate provides three ways to hash inputs:
   ```
   
   The `hasher` can be reused for hashing multiple inputs, when seed and secret are fixed. It's
-  faster than one-shot hashing, in this scenario as the initialization work is done only once.
+  faster than one-shot hashing in this scenario, as the initialization work will be done only
+  once.
+
 - Streamed hashing. When the input is too large to fit into a single buffer, or the length of 
   input is unknown at the beginning, streamed hasher can be used.
   
