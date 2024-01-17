@@ -1,0 +1,32 @@
+[lib]
+crate-type=["lib"]
+[package]
+name = "wyhash-final4"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+wyhash32 = []
+wyhash32condom = []
+wyhash64 = []
+wyhash64condom = []
+std= []
+default=["wyhash32", "wyhash32condom", "wyhash64", "wyhash64condom", "std"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[dev-dependencies]
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = 'thin'
+overflow-checks = false
+
+[profile.bench]
+opt-level = 3
+codegen-units = 1
+lto = 'thin'
+overflow-checks = false
