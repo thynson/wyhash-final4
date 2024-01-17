@@ -78,3 +78,8 @@ There are several build features that can be enabled or disabled:
 All the features are enabled by default.
 
 [smhasher]: https://github.com/rurban/smhasher
+
+License
+=======
+
+Public domain. See [LICENSE](LICENSE) for details.
