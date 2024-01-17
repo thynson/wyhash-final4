@@ -87,4 +87,4 @@ All the features are enabled by default.
 License
 =======
 
-Public domain. See [LICENSE](LICENSE) for details.
+ISC. See LINCESE file for details.
