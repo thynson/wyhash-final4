@@ -87,4 +87,4 @@ All the features are enabled by default.
 License
 =======
 
-ISC. See LINCESE file for details.
+The MIT License. See LINCESE file for details.

@@ -5,6 +5,7 @@ name = "wyhash-final4"
 description = "The rust implementation of wyhash final4 hash function"
 version = "0.1.2"
 edition = "2021"
+license = "MIT"
 license-file = "./LICENSE"
 
 [features]
