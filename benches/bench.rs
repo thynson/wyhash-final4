@@ -1,39 +1,43 @@
-#![feature(test)]
-
+use criterion::{criterion_group, criterion_main, Criterion};
 use std::hint::black_box;
 use std::time::{SystemTime, UNIX_EPOCH};
-use wyhash_final4::generics::{WyHashVariant};
+use wyhash_final4::generics::WyHashVariant;
 use wyhash_final4::wyhash32::*;
 use wyhash_final4::wyhash32condom::*;
 use wyhash_final4::wyhash64::*;
 use wyhash_final4::wyhash64condom::*;
 
-extern crate test;
-
-use test::Bencher;
-
 macro_rules! impl_oneshot_bench {
     ($brand: ident, $variant: ident; $($bench: ident, $size: literal);* ) => {
         mod $brand {
-
             use super::*;
-            $(
-            #[bench]
-            fn $bench(b: &mut Bencher) {
-                let mut content = [0u8; $size];
-                let mut seed = SystemTime::now()
-                    .duration_since(UNIX_EPOCH)
-                    .unwrap()
-                    .as_millis() as u64;
-                content.chunks_mut(8).for_each(|chunk| {
-                    chunk.copy_from_slice(&seed.to_le_bytes()[..chunk.len()]);
-                });
-
-                b.iter(move || {
-                    seed ^= black_box(<$variant>::hash_with_seed(&content, seed));
-                });
+            fn bench(c: &mut Criterion) {
+                $(
+                    c.bench_function(
+                        format!("{}::{}", stringify!($brand), stringify!($bench)).as_str(),
+                        |b| {
+                        let mut content = [0u8; $size];
+                        let mut seed = SystemTime::now()
+                            .duration_since(UNIX_EPOCH)
+                            .unwrap()
+                            .as_millis() as u64;
+                        content.chunks_mut(8).for_each(|chunk| {
+                            chunk.copy_from_slice(&seed.to_le_bytes()[..chunk.len()]);
+                        });
+                        b.iter(move || {
+                            seed ^= black_box(<$variant>::hash_with_seed(&content, seed));
+                        });
+                    });
+                )*
             }
-            )*
+            criterion_group!(
+                name=benches;
+                config=Criterion::default()
+                    .sample_size(100)
+                    .warm_up_time(std::time::Duration::from_millis(5))
+                    .measurement_time(std::time::Duration::from_millis(50));
+                targets=bench
+            );
         }
     };
 }
@@ -41,25 +45,35 @@ macro_rules! impl_oneshot_bench {
 macro_rules! impl_hasher_bench {
     ($brand: ident, $variant: ty; $($bench: ident, $size: literal);* ) => {
         mod $brand {
-
             use super::*;
-            $(
-            #[bench]
-            fn $bench(b: &mut Bencher) {
-                let mut content = [0u8; $size];
-                let seed = SystemTime::now()
-                    .duration_since(UNIX_EPOCH)
-                    .unwrap()
-                    .as_millis() as u64;
-                content.chunks_mut(8).for_each(|chunk| {
-                    chunk.copy_from_slice(&seed.to_le_bytes()[..chunk.len()]);
-                });
-                let hasher = <$variant>::with_seed(seed);
-                b.iter(move || {
-                    black_box(hasher.hash(&content));
-                });
+            fn bench(c: &mut Criterion) {
+                $(
+                    c.bench_function(
+                        format!("{}::{}", stringify!($brand), stringify!($bench)).as_str(),
+                        |b| {
+                        let mut content = [0u8; $size];
+                        let seed = SystemTime::now()
+                            .duration_since(UNIX_EPOCH)
+                            .unwrap()
+                            .as_millis() as u64;
+                        content.chunks_mut(8).for_each(|chunk| {
+                            chunk.copy_from_slice(&seed.to_le_bytes()[..chunk.len()]);
+                        });
+                        let hasher = <$variant>::with_seed(seed);
+                        b.iter(move || {
+                            black_box(hasher.hash(&content));
+                        });
+                    });
+                )*
             }
-            )*
+            criterion_group!(
+                name=benches;
+                config=Criterion::default()
+                    .sample_size(100)
+                    .warm_up_time(std::time::Duration::from_millis(5))
+                    .measurement_time(std::time::Duration::from_millis(50));
+                targets=bench
+            );
         }
     };
 }
@@ -67,27 +81,37 @@ macro_rules! impl_hasher_bench {
 macro_rules! impl_streamed_bench {
     ($brand: ident, $variant: ty; $($bench: ident, $size: literal);* ) => {
         mod $brand {
-
             use super::*;
-            $(
-            #[bench]
-            fn $bench(b: &mut Bencher) {
-                let mut content = [0u8; $size];
-                let seed = SystemTime::now()
-                    .duration_since(UNIX_EPOCH)
-                    .unwrap()
-                    .as_millis() as u64;
-                content.chunks_mut(8).for_each(|chunk| {
-                    chunk.copy_from_slice(&seed.to_le_bytes()[..chunk.len()]);
-                });
-                let hasher = <$variant>::with_seed(seed);
-                b.iter(move || {
-                    let mut hasher = hasher.streamed();
-                    hasher.write(&content);
-                    black_box(hasher.finish());
-                });
+            fn bench(c: &mut Criterion) {
+                $(
+                    c.bench_function(
+                        format!("{}::{}", stringify!($brand), stringify!($bench)).as_str(),
+                        |b| {
+                        let mut content = [0u8; $size];
+                        let seed = SystemTime::now()
+                            .duration_since(UNIX_EPOCH)
+                            .unwrap()
+                            .as_millis() as u64;
+                        content.chunks_mut(8).for_each(|chunk| {
+                            chunk.copy_from_slice(&seed.to_le_bytes()[..chunk.len()]);
+                        });
+                        let hasher = <$variant>::with_seed(seed);
+                        b.iter(move || {
+                            let mut hasher = hasher.streamed();
+                            hasher.write(&content);
+                            black_box(hasher.finish());
+                        });
+                    });
+                )*
             }
-            )*
+            criterion_group!(
+                name=benches;
+                config=Criterion::default()
+                    .sample_size(1000)
+                    .warm_up_time(std::time::Duration::from_millis(5))
+                    .measurement_time(std::time::Duration::from_millis(50));
+                targets=bench
+            );
         }
     };
 }
@@ -330,4 +354,19 @@ impl_streamed_bench!(
     streamed_01024bytes, 1024;
     streamed_04096bytes, 4096;
     streamed_16384bytes, 16384
+);
+
+criterion_main!(
+    wyhash64_oneshot::benches,
+    wyhash64_hasher::benches,
+    wyhash64_streamed::benches,
+    wyhash64condom_oneshot::benches,
+    wyhash64condom_hasher::benches,
+    wyhash64condom_streamed::benches,
+    wyhash32_oneshot::benches,
+    wyhash32_hasher::benches,
+    wyhash32_streamed::benches,
+    wyhash32condom_oneshot::benches,
+    wyhash32condom_hasher::benches,
+    wyhash32condom_streamed::benches,
 );

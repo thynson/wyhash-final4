@@ -1,5 +1,6 @@
 [lib]
-crate-type=["lib"]
+crate-type = ["lib"]
+
 [package]
 name = "wyhash-final4"
 description = "The rust implementation of wyhash final4 hash function"
@@ -8,21 +9,27 @@ edition = "2021"
 license = "MIT"
 repository = "https://github.com/thynson/wyhash-final4.git"
 homepage = "https://github.com/thynson/wyhash-final4"
-keywords = [ "hash", "wyhash" ]
+keywords = ["hash", "wyhash"]
 
 [features]
 wyhash32 = []
 wyhash32condom = []
 wyhash64 = []
 wyhash64condom = []
-std= []
-default=["wyhash32", "wyhash32condom", "wyhash64", "wyhash64condom", "std"]
+std = []
+default = ["wyhash32", "wyhash32condom", "wyhash64", "wyhash64condom", "std"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bench]]
+name = "bench"
+harness = false
+
 
 [dependencies]
 
 [dev-dependencies]
+criterion = "0.4"
 
 [profile.release]
 opt-level = 3
