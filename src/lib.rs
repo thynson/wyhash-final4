@@ -22,7 +22,6 @@
 // SOFTWARE.
 //
 
-
 //!
 //! This crate provides a pure rust implementation of wyhash_final4,
 //! which is an extremely fast hash function that can be implemented

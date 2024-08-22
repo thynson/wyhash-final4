@@ -1,5 +1,5 @@
 use crate::util::{
-    likely, unlikely, wy_read_4, wy_read_8, wy_read_tail3, wy_read_tail8, wy_rotate
+    likely, unlikely, wy_read_4, wy_read_8, wy_read_tail3, wy_read_tail8, wy_rotate,
 };
 use core::marker::PhantomData;
 
@@ -256,7 +256,6 @@ impl<T: WyHashVariant> std::hash::BuildHasher for WyHasher<T> {
         }
     }
 }
-
 
 // Used when generating secret
 const C: [u64; 70] = [

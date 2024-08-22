@@ -23,8 +23,8 @@ impl WyHashVariant for WyHash64Condom {
 #[cfg(feature = "std")]
 pub mod test {
 
-    use crate::generics::test::*;
     use super::*;
+    use crate::generics::test::*;
 
     const TEST_VECTOR: TestVector = [
         ("",0, 0x90d3db895794f51),
@@ -188,11 +188,15 @@ pub mod test {
 
     #[test]
     fn extended_test() {
-
         for (seed_and_len, result) in EXTENDED_TEST_VECTOR.iter() {
             let input = &EXTENDED_TEST_VECTOR_BUFFER[..*seed_and_len];
             let hasher = WyHash64Condom::with_seed(*seed_and_len as u64);
-            assert_eq!(hasher.hash(input), *result, "length_and_len: {}", seed_and_len);
+            assert_eq!(
+                hasher.hash(input),
+                *result,
+                "length_and_len: {}",
+                seed_and_len
+            );
         }
     }
 

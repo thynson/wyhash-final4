@@ -1,4 +1,3 @@
-
 #[inline(always)]
 pub(crate) fn wy_rotate(x: u64) -> u64 {
     (x >> 32) | (x << 32)

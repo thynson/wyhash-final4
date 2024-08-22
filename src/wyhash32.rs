@@ -26,8 +26,8 @@ impl WyHashVariant for WyHash32 {
 #[cfg(feature = "std")]
 mod test {
 
-    use crate::generics::test::*;
     use super::*;
+    use crate::generics::test::*;
 
     const TEST_VECTOR: TestVector = [
         ("", 0, 0x4b80acaa567a5c84),
@@ -191,11 +191,15 @@ mod test {
 
     #[test]
     fn extended_test() {
-
         for (seed_and_len, result) in EXTENDED_TEST_VECTOR.iter() {
             let input = &EXTENDED_TEST_VECTOR_BUFFER[..*seed_and_len];
             let hasher = WyHash32::with_seed(*seed_and_len as u64);
-            assert_eq!(hasher.hash(input), *result, "length_and_len: {}", seed_and_len);
+            assert_eq!(
+                hasher.hash(input),
+                *result,
+                "length_and_len: {}",
+                seed_and_len
+            );
         }
     }
 
