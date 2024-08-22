@@ -201,6 +201,20 @@ mod test {
                 "length_and_len: {}",
                 seed_and_len
             );
+            for chunksize in 1..=48 {
+                let mut hasher = WyHash32Condom::with_seed(*seed_and_len as u64).streamed();
+                for chunk in input.chunks(chunksize) {
+                    hasher.write(chunk);
+                }
+                assert_eq!(
+                    hasher.finish(),
+                    *result,
+                    "failed: chunksize: {}, seed: {}, chunks: {:?}",
+                    chunksize,
+                    *seed_and_len as u64,
+                    input.chunks(chunksize).collect::<Vec<_>>()
+                );
+            }
         }
     }
 

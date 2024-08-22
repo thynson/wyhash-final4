@@ -1,5 +1,5 @@
 use crate::util::{
-    likely, unlikely, wy_read_4, wy_read_8, wy_read_tail3, wy_read_tail8, wy_rotate,
+    likely, unlikely, wy_read_4, wy_read_8, wy_read_tail3, wy_read_tail8,
 };
 use core::marker::PhantomData;
 
@@ -324,69 +324,45 @@ impl<T: WyHashVariant> StreamedWyHasher<T> {
     }
 
     pub fn finish(&self) -> u64 {
-        let mut a = 0u64;
-        let mut b = 0u64;
-        let len = self.len;
-        let mut seed = self.seed;
-        let input = &self.buffer[0..self.off];
-        if len >= 48 {
-            if self.off > 32 {
-                seed = T::mul_mix(
-                    wy_read_8(&self.buffer[0..]) ^ self.secret[1],
-                    wy_read_8(&self.buffer[8..]) ^ seed,
-                );
-                seed = T::mul_mix(
-                    wy_read_8(&self.buffer[16..]) ^ self.secret[1],
-                    wy_read_8(&self.buffer[24..]) ^ seed,
-                );
-
-                a = wy_read_8(&self.buffer[(self.off - 16)..]);
-                b = wy_read_8(&self.buffer[(self.off - 8)..]);
-            } else if self.off > 16 {
-                seed = T::mul_mix(
-                    wy_read_8(&self.buffer[0..]) ^ self.secret[1],
-                    wy_read_8(&self.buffer[8..]) ^ seed,
-                );
-                a = wy_read_8(&self.buffer[(self.off - 16)..]);
-                b = wy_read_8(&self.buffer[(self.off - 8)..]);
-            } else {
-                let mut tmp = [0u8; 16];
-                let size_read_back = 16 - self.off;
-                tmp[0..size_read_back].copy_from_slice(&self.buffer[(48 - size_read_back)..]);
-                tmp[size_read_back..].copy_from_slice(&self.buffer[0..self.off]);
-
-                a = wy_read_8(&tmp);
-                b = wy_read_8(&tmp[8..]);
-            }
-        } else if len > 32 {
-            seed = T::mul_mix(
-                wy_read_8(&input[0..]) ^ self.secret[1],
-                wy_read_8(&input[8..]) ^ seed,
-            );
-            seed = T::mul_mix(
-                wy_read_8(&input[16..]) ^ self.secret[1],
-                wy_read_8(&input[24..]) ^ seed,
-            );
-            a = wy_read_8(&input[(len - 16)..]);
-            b = wy_read_8(&input[(len - 8)..]);
-        } else if len > 16 {
-            seed = T::mul_mix(
-                wy_read_8(&input[0..]) ^ self.secret[1],
-                wy_read_8(&input[8..]) ^ seed,
-            );
-            a = wy_read_8(&input[(len - 16)..]);
-            b = wy_read_8(&input[(len - 8)..]);
-        } else if len >= 8 {
-            a = wy_rotate(wy_read_8(input));
-            b = wy_read_8(&input[len - 8..]);
-        } else if len >= 4 {
-            let u = wy_read_4(input);
-            let v = wy_read_4(&input[(len - 4)..]);
-            a = (u << 32) | u;
-            b = (v << 32) | v;
-        } else if len > 0 {
-            a = wy_read_tail3(input);
+        if self.len <= 48 {
+            return WyHasher {
+                secret: self.secret,
+                seed: self.seed,
+                _marker: PhantomData::<T>
+            }.hash(&self.buffer[..self.len]);
         }
+        let mut a;
+        let mut b;
+        let mut seed = self.seed;
+        if self.off > 32 {
+            seed = T::mul_mix(
+                wy_read_8(&self.buffer[0..]) ^ self.secret[1],
+                wy_read_8(&self.buffer[8..]) ^ seed,
+            );
+            seed = T::mul_mix(
+                wy_read_8(&self.buffer[16..]) ^ self.secret[1],
+                wy_read_8(&self.buffer[24..]) ^ seed,
+            );
+
+            a = wy_read_8(&self.buffer[(self.off - 16)..]);
+            b = wy_read_8(&self.buffer[(self.off - 8)..]);
+        } else if self.off > 16 {
+            seed = T::mul_mix(
+                wy_read_8(&self.buffer[0..]) ^ self.secret[1],
+                wy_read_8(&self.buffer[8..]) ^ seed,
+            );
+            a = wy_read_8(&self.buffer[(self.off - 16)..]);
+            b = wy_read_8(&self.buffer[(self.off - 8)..]);
+        } else {
+            let mut tmp = [0u8; 16];
+            let size_read_back = 16 - self.off;
+            tmp[0..size_read_back].copy_from_slice(&self.buffer[(48 - size_read_back)..]);
+            tmp[size_read_back..].copy_from_slice(&self.buffer[0..self.off]);
+
+            a = wy_read_8(&tmp);
+            b = wy_read_8(&tmp[8..]);
+        }
+
         a ^= self.secret[1];
         b ^= seed;
         (a, b) = T::mul_mum(a, b);

@@ -20,9 +20,8 @@ impl WyHashVariant for WyHash64 {
 #[cfg(test)]
 #[cfg(feature = "std")]
 mod test {
-    use crate::generics::test::*;
-
     use super::*;
+    use crate::generics::test::*;
 
     const TEST_VECTOR: TestVector = [
         ("",0, 0x409638ee2bde459),
@@ -195,6 +194,21 @@ mod test {
                 "length_and_len: {}",
                 seed_and_len
             );
+
+            for chunksize in 1..=48 {
+                let mut hasher = WyHash64::with_seed(*seed_and_len as u64).streamed();
+                for chunk in input.chunks(chunksize) {
+                    hasher.write(chunk);
+                }
+                assert_eq!(
+                    hasher.finish(),
+                    *result,
+                    "failed: chunksize: {}, seed: {}, chunks: {:?}",
+                    chunksize,
+                    *seed_and_len as u64,
+                    input.chunks(chunksize).collect::<Vec<_>>()
+                );
+            }
         }
     }
 
