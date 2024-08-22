@@ -2,7 +2,7 @@ use crate::generics::WyHashVariant;
 
 ///
 /// A type represents the wyhash variant that use 64bit multiplication and an extra xor
-/// for mixing, which survives against entropy loss that could happens in the probability of 2^-64.
+/// for mixing, which survives against entropy loss that could happen in the probability of 2^-64.
 ///
 #[derive(Copy, Clone)]
 pub struct WyHash64Condom {

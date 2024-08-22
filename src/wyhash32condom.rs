@@ -3,7 +3,7 @@ use crate::util::wy_rotate;
 
 ///
 /// A type represents the wyhash variant that use 32bit multiplication and an extra xor
-/// for mixing, which survives against entropy loss that could happens in the probability of 2^-64.
+/// for mixing, which survives against entropy loss that could happen in a near-zero probability.
 /// Note that the 32 bit variants of wyhash is faster than 64bit variants on 32bit platforms, but
 /// much slower on 64bit platforms.
 ///

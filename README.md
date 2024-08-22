@@ -28,8 +28,9 @@ It worth nothing to note that,
 - the 32-bit variants are faster on 32-bit platform, but much slower on 64-bit platform;
 - the `Condom` variants are slightly slower due to an extra bit-xor was used when mixing.
   As wyhash use multiplication for mixing, for some particular input (with a negligible 
-  probability of 2^-64) the mixing becomes multiplying by zero, thus losing all the entropy.
-  The `Condom` variants are resistant to this problem thanks to the extra bit-xor.
+  probability of 2^-64 for WyHash64) the mixing becomes multiplying by zero, thus losing 
+  all the entropy. The `Condom` variants are resistant to this problem thanks to the extra 
+  bit-xor.
  
 If you are not sure which variant to use, just use `WyHash64`.
 
@@ -87,4 +88,4 @@ All the features are enabled by default.
 License
 =======
 
-The MIT License. See LINCESE file for details.
+The MIT License. See LICENSE file for details.
