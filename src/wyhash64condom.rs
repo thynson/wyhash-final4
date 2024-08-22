@@ -23,8 +23,7 @@ impl WyHashVariant for WyHash64Condom {
 #[cfg(feature = "std")]
 pub mod test {
 
-    use crate::generics::test::TestVector;
-
+    use crate::generics::test::*;
     use super::*;
 
     const TEST_VECTOR: TestVector = [
@@ -52,6 +51,99 @@ pub mod test {
         (0x7, [0xb1711df0959a330f, 0x69634e3a4ba98b55, 0x87f0e4a9d11d59d1, 0x66cca5c687e89353]),
         (0x8, [0xaa17c33ca54b2e87, 0x3a59e84e36b1c947, 0xacb155787878c335, 0x9636cce2b82e998b]),
         (0x9, [0x55a91bd82b9387a9, 0x99b18da53663554d, 0x477453171d56d165, 0x9ae2748e69b2c94b]),
+    ];
+
+    const EXTENDED_TEST_VECTOR: ExtendedTestVector = [
+        (0, 0x090d3db895794f51u64),
+        (1, 0x5c4240833cac92a0u64),
+        (2, 0x5927a76ccdbd2a69u64),
+        (3, 0x3c3dff9e28ee3aa7u64),
+        (4, 0xc6032b2421a39485u64),
+        (5, 0x493060b44c8ba393u64),
+        (6, 0xc6530c1ab0e75661u64),
+        (7, 0xb9fd91ea39b70baau64),
+        (8, 0x4cbead4b00cec38bu64),
+        (9, 0x7fec2df588a51419u64),
+        (10, 0x4cb68d38a9f9bef6u64),
+        (11, 0x5706765edcd6c4e9u64),
+        (12, 0x48a0733e5e291d68u64),
+        (13, 0x3751610c7b6fe13bu64),
+        (14, 0x1ebf5276bcd25770u64),
+        (15, 0x2500a76517877410u64),
+        (16, 0xa3bea891c98779edu64),
+        (17, 0x3978cded66b9903bu64),
+        (18, 0x7090de6a888d3c79u64),
+        (19, 0xc2711748ba14a40au64),
+        (20, 0x2451971a98eab449u64),
+        (21, 0x6a90d0bb8b7ebc47u64),
+        (22, 0x948534b134e8dde6u64),
+        (23, 0xede3dffb7a52a62fu64),
+        (24, 0x736bf9ff3239e3f3u64),
+        (25, 0x2799da6a7fd994e1u64),
+        (26, 0x06febf33f1d2b793u64),
+        (27, 0xca54f734464b4f71u64),
+        (28, 0x56d05dc05c98eaceu64),
+        (29, 0x7f54dc1e812dd741u64),
+        (30, 0x83f7e64ace8c1476u64),
+        (31, 0x497a876b86954adcu64),
+        (32, 0x4927d53c964c8480u64),
+        (33, 0x54e1e1b460317b98u64),
+        (34, 0x9a08ec3cf5f2566fu64),
+        (35, 0xa24fbbc0c9a33004u64),
+        (36, 0x7ac5450726a37c49u64),
+        (37, 0xd74c1aff391bc2aeu64),
+        (38, 0xe8474002dc7fb0feu64),
+        (39, 0x3bef8e8a1c3d7033u64),
+        (40, 0x717143c8ad25c7f5u64),
+        (41, 0x27871753c1e5d391u64),
+        (42, 0x9d5c533b782068c1u64),
+        (43, 0x3af774fefc196ce3u64),
+        (44, 0xa62a6bd4afa723c2u64),
+        (45, 0xe50a27ecd4ba0752u64),
+        (46, 0x56d9fc55c6081abeu64),
+        (47, 0x0fbd0dcf98edba62u64),
+        (48, 0xbf5be5288b96b228u64),
+        (49, 0x029cf445f50d1263u64),
+        (50, 0xfc942adda4ec648eu64),
+        (51, 0x1e522a359961cc78u64),
+        (52, 0x13d193aa80589b02u64),
+        (53, 0x33016678373b43e2u64),
+        (54, 0x6eb00f0bb2685af7u64),
+        (55, 0xc72e87aa395f765bu64),
+        (56, 0xd70aca673033547au64),
+        (57, 0xde37287385c1f052u64),
+        (58, 0x985497f486c810a9u64),
+        (59, 0x61424d0fba2d2f6cu64),
+        (60, 0x8ff12a13a3a52958u64),
+        (61, 0x7dfd0d81f5605557u64),
+        (62, 0x35874d831d91363du64),
+        (63, 0x090cbe31bde3cd6eu64),
+        (64, 0x5673caeab747c2dfu64),
+        (65, 0xfdcc5d843d2aeefcu64),
+        (66, 0x0730eef46d5eff5au64),
+        (67, 0x06f532d1ab13fd07u64),
+        (68, 0x78d8fd8e47b88c0bu64),
+        (69, 0xa2e297245f54506fu64),
+        (70, 0x435a224b0a450613u64),
+        (71, 0x4b7e19a876c98f1du64),
+        (72, 0x8328a42038acb4ceu64),
+        (73, 0x2f8e484b926abe12u64),
+        (74, 0xd367912efef11e56u64),
+        (75, 0x015058b27d0ac7eeu64),
+        (76, 0x1c9d5a01c1df32a2u64),
+        (77, 0xd02d8524b08b3f54u64),
+        (78, 0x504628395f10a642u64),
+        (79, 0x9afe5b40d807e2cfu64),
+        (80, 0x636227bd9452ce91u64),
+        (81, 0xcf57942f1cb2f9f5u64),
+        (82, 0xda6e2a1cb5e4be73u64),
+        (83, 0x1589a625fa349726u64),
+        (84, 0xdb5b2d5fffb61e34u64),
+        (85, 0x42c4b15e3e726b46u64),
+        (86, 0x8781ec21dc327557u64),
+        (87, 0x16c9dabc4cab3fffu64),
+        (88, 0x5cc29141b01772abu64),
+        (89, 0xfd6b9586898e0ec4u64),
     ];
 
     #[test]
@@ -91,6 +183,16 @@ pub mod test {
                 input.len(),
                 seed
             );
+        }
+    }
+
+    #[test]
+    fn extended_test() {
+
+        for (seed_and_len, result) in EXTENDED_TEST_VECTOR.iter() {
+            let input = &EXTENDED_TEST_VECTOR_BUFFER[..*seed_and_len];
+            let hasher = WyHash64Condom::with_seed(*seed_and_len as u64);
+            assert_eq!(hasher.hash(input), *result, "length_and_len: {}", seed_and_len);
         }
     }
 

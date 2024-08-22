@@ -141,18 +141,13 @@ impl<T: WyHashVariant> WyHasher<T> {
         let mut a = 0u64;
         let mut b = 0u64;
         let seed = self.seed;
-        if likely(len < 8) {
-            if len >= 4 {
-                let u = wy_read_4(input);
-                let v = wy_read_4(&input[(len - 4)..]);
-                a = (u << 32) | u;
-                b = (v << 32) | v;
-            } else if likely(len > 0) {
-                a = wy_read_tail3(input);
-            }
-        } else {
-            a = wy_rotate(wy_read_8(input));
-            b = wy_read_8(&input[len - 8..]);
+        if len >= 4 {
+            let u = wy_read_4(input);
+            let v = wy_read_4(&input[(len - 4)..]);
+            a = (u << 32) | wy_read_4(&input[((len >> 3) << 2)..]);
+            b = (v << 32) | wy_read_4(&input[(len - 4 - ((len >> 3) << 2))..]);
+        } else if likely(len > 0) {
+            a = wy_read_tail3(input);
         }
         self.epilogue(a, b, len, seed)
     }
@@ -213,6 +208,9 @@ impl<T: WyHashVariant> WyHasher<T> {
             b = wy_read_8(input).wrapping_shl(64 - shift);
             a |= b;
             b = wy_read_8(&input[input.len() - 8..]);
+        } else if input.len() == 8 {
+            a = b;
+            b = wy_read_8(input);
         } else {
             let shift = (input.len() << 3) as u32;
             a = a.wrapping_shr(shift) | b.wrapping_shl(64 - shift);
@@ -446,4 +444,9 @@ impl<T: WyHashVariant> StreamedWyHasher<T> {
 #[cfg(feature = "std")]
 pub(crate) mod test {
     pub(crate) type TestVector = [(&'static str, u64, u64); 10];
+
+    pub const EXTENDED_TEST_VECTOR_BUFFER: &[u8] =
+        b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()`~-_=+[{]};:,<.>/?";
+
+    pub type ExtendedTestVector = [(usize, u64); 90];
 }
