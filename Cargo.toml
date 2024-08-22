@@ -4,7 +4,7 @@ crate-type = ["lib"]
 [package]
 name = "wyhash-final4"
 description = "The rust implementation of wyhash final4 hash function"
-version = "0.1.3"
+version = "0.2.0"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/thynson/wyhash-final4.git"
