@@ -1,7 +1,7 @@
 use crate::util::{likely, unlikely, wy_read_4, wy_read_8, wy_read_tail3, wy_read_tail8};
 use core::marker::PhantomData;
 
-pub trait WyHashVariant: Sized {
+pub trait WyHashVariant: Clone + Sized {
     fn mul_mum(a: u64, b: u64) -> (u64, u64);
 
     #[inline(always)]
@@ -103,6 +103,7 @@ pub trait WyHashVariant: Sized {
     }
 }
 
+#[derive(Clone)]
 pub struct WyHasher<T: WyHashVariant> {
     secret: [u64; 4],
     seed: u64,
@@ -280,7 +281,7 @@ const DEFAULT_SECRET: [u64; 4] = [
     0x589965cc75374cc3u64,
 ];
 
-fn wyrand<V: WyHashVariant + ?Sized>(seed: &mut u64) -> u64 {
+fn wyrand<V: WyHashVariant>(seed: &mut u64) -> u64 {
     *seed = seed.wrapping_add(0xa0761d6478bd642fu64);
     V::mul_mix(*seed, (*seed) ^ 0xe7037ed1a0b428dbu64)
 }

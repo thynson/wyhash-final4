@@ -1,12 +1,12 @@
 #[inline(always)]
 pub(crate) fn wy_rotate(x: u64) -> u64 {
-    (x >> 32) | (x << 32)
+    x.rotate_left(32)
 }
 
 ///
-/// Read a unsigned 64-bit integer from a byte slice in little-endian order.
+/// Read first 8 bytes of a given slice as a u64 in little-endian order.
 ///
-/// Note that the caller must ensure that the byte slice is at least 8 bytes long,
+/// SAFETY: the caller must ensure that the byte slice is at least 8 bytes long,
 /// otherwise it will cause undefined behavior.
 ///
 #[inline(always)]
@@ -15,6 +15,9 @@ pub(crate) unsafe fn wy_read_8(input: &[u8]) -> u64 {
 }
 
 /// Read first two bytes of a given slice as a u64 in little-endian order.
+///
+/// SAFETY: the caller must ensure that the byte slice is at least 2 bytes long,
+/// otherwise it will cause undefined behavior.
 #[inline(always)]
 unsafe fn wy_read_2(input: &[u8]) -> u64 {
     unsafe { u16::from_le_bytes(*(input.as_ptr() as *const [u8; 2])) as u64 }
@@ -44,12 +47,10 @@ pub(crate) fn wy_read_tail8(input: &[u8]) -> u64 {
     }
 }
 
+/// Read first four bytes of a given slice as a u64 in little-endian order.
 ///
-/// Read a unsigned 64-bit integer from a byte slice in little-endian order.
-///
-/// Note that the caller must ensure that the byte slice is at least 4 bytes long,
+/// SAFETY: the caller must ensure that the byte slice is at least 4 bytes long,
 /// otherwise it will cause undefined behavior.
-///
 #[inline(always)]
 pub(crate) unsafe fn wy_read_4(input: &[u8]) -> u64 {
     unsafe { u32::from_le_bytes(*(input.as_ptr() as *const [u8; 4])) as u64 }
