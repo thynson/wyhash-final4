@@ -10,12 +10,13 @@ pub(crate) fn wy_rotate(x: u64) -> u64 {
 /// otherwise it will cause undefined behavior.
 ///
 #[inline(always)]
-pub(crate) fn wy_read_8(input: &[u8]) -> u64 {
+pub(crate) unsafe fn wy_read_8(input: &[u8]) -> u64 {
     unsafe { u64::from_le_bytes(*(input.as_ptr() as *const [u8; 8])) }
 }
 
+/// Read first two bytes of a given slice as a u64 in little-endian order.
 #[inline(always)]
-fn wy_read_2(input: &[u8]) -> u64 {
+unsafe fn wy_read_2(input: &[u8]) -> u64 {
     unsafe { u16::from_le_bytes(*(input.as_ptr() as *const [u8; 2])) as u64 }
 }
 
@@ -27,17 +28,19 @@ fn wy_read_2(input: &[u8]) -> u64 {
 ///
 #[inline(always)]
 pub(crate) fn wy_read_tail8(input: &[u8]) -> u64 {
-    match input.len() {
-        0 => 0,
-        1 => input[0] as u64,
-        2 => wy_read_2(input),
-        3 => wy_read_2(input) | ((input[2] as u64) << 16),
-        4 => wy_read_4(input),
-        5 => wy_read_4(input) | ((input[4] as u64) << 32),
-        6 => wy_read_4(input) | (wy_read_2(&input[4..]) << 32),
-        7 => wy_read_4(input) | (wy_read_2(&input[4..]) << 32) | ((input[6] as u64) << 48),
-        8 => wy_read_8(input),
-        _ => unreachable!(),
+    unsafe {
+        match input.len() {
+            0 => 0,
+            1 => input[0] as u64,
+            2 => wy_read_2(input),
+            3 => wy_read_2(input) | ((input[2] as u64) << 16),
+            4 => wy_read_4(input),
+            5 => wy_read_4(input) | ((input[4] as u64) << 32),
+            6 => wy_read_4(input) | (wy_read_2(&input[4..]) << 32),
+            7 => wy_read_4(input) | (wy_read_2(&input[4..]) << 32) | ((input[6] as u64) << 48),
+            8 => wy_read_8(input),
+            _ => unreachable!(),
+        }
     }
 }
 
@@ -48,7 +51,7 @@ pub(crate) fn wy_read_tail8(input: &[u8]) -> u64 {
 /// otherwise it will cause undefined behavior.
 ///
 #[inline(always)]
-pub(crate) fn wy_read_4(input: &[u8]) -> u64 {
+pub(crate) unsafe fn wy_read_4(input: &[u8]) -> u64 {
     unsafe { u32::from_le_bytes(*(input.as_ptr() as *const [u8; 4])) as u64 }
 }
 
@@ -58,9 +61,12 @@ pub(crate) fn wy_read_4(input: &[u8]) -> u64 {
 /// of it is greater than 0 and less than 4.
 ///
 #[inline(always)]
-pub(crate) fn wy_read_tail3(input: &[u8]) -> u64 {
-    let len = input.len();
-    ((input[0] as u64) << 16) | ((input[len >> 1] as u64) << 8) | (input[len - 1] as u64)
+pub(crate) unsafe fn wy_read_tail3(input: &[u8]) -> u64 {
+    unsafe {
+        let len = input.len();
+        let input = input.as_ptr();
+        (*input as u64) << 16 | (*input.add(len >> 1) as u64) << 8 | *input.add(len - 1) as u64
+    }
 }
 
 #[inline(always)]
