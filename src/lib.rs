@@ -32,8 +32,6 @@
 //! in previous versions.
 //!
 
-#![cfg_attr(feature = "no_std", no_std)]
-
 pub mod generics;
 mod util;
 
